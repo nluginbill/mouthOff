@@ -27,6 +27,7 @@ def getListOfAcademyAwardNominees():
 
         R = S.get(url=URL, params=PARAMS)
         DATA = R.json()
+        links = None
         # print(json.dumps(DATA, sort_keys=True, indent=4))
         if "query" in DATA:       
             links = DATA["query"]["pages"][0]["linkshere"]
@@ -69,6 +70,12 @@ def getEachActorInfo(listOfActors):
             if soup.find('th', text="Occupation"):
                 if "Actor" or "Actress" in soup.find('th', text="Occupation").parent:
                     actualActor = True
+                if soup.find("td", class_="infobox-image").next_element['href']:                
+                    actor['picurl'] = soup.find("td", class_="infobox-image").next_element['href']
+                    actor['picurl'] = actor['picurl'][11:]
+                    print(actor['picurl'])
+                else:
+                    actualActor = False
             if actualActor:
                 academyActors.append(actor)
 
@@ -77,14 +84,15 @@ def getEachActorInfo(listOfActors):
 
 def storeListOfAAN():
     with open("actors.csv", "w", newline="") as file:
-        headers = ["pageid", "name"]
+        headers = ["pageid", "name", "picurl"]
         csv_writer = DictWriter(file, fieldnames=headers)
         csv_writer.writeheader()
         listOfActors = getEachActorInfo(getListOfAcademyAwardNominees())
         for actor in listOfActors:
             csv_writer.writerow({
                 "pageid": actor["pageid"],
-                "name": actor["name"] 
+                "name": actor["name"],
+                "picurl": actor["picurl"]
                 })
 
 def retrieveListOfAAN():
@@ -96,8 +104,26 @@ def retrieveListOfAAN():
             if i > 0:
                 actor["pageid"] = row["pageid"]
                 actor["name"] = row["name"]
+                actor["picurl"] = row["picurl"]
                 listOfActors.append(actor)
 
     return listOfActors
 
+# def testQueries():
+#     S = requests.Session()
+#     URL = "https://en.wikipedia.org/w/api.php"    
+
+#     PARAMS = {
+#         "action": "parse",
+#         "format": "json",
+#         "pageid": 2397,
+#         "prop": "categories|images|text",
+#         "maxlag": "1"
+#     }
+
+#     R = S.get(url=URL, params=PARAMS)
+#     DATA = R.json()
+#     soup = BeautifulSoup(DATA["parse"]["text"]["*"], "html.parser")
+#     print(soup.find("td", class_="infobox-image").next_element['href'])
+    
 storeListOfAAN()
