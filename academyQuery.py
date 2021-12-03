@@ -4,6 +4,7 @@ import time
 from csv import DictReader, DictWriter
 from bs4 import BeautifulSoup
 
+
 # returns a list of all Academy Award Nominees
 def getListOfAcademyAwardNominees():
     S = requests.Session()
@@ -73,7 +74,6 @@ def getEachActorInfo(listOfActors):
                 if soup.find("td", class_="infobox-image").next_element['href']:                
                     actor['picurl'] = soup.find("td", class_="infobox-image").next_element['href']
                     actor['picurl'] = actor['picurl'][11:]
-                    print(actor['picurl'])
                 else:
                     actualActor = False
             if actualActor:
@@ -106,8 +106,8 @@ def retrieveListOfAAN():
                 actor["name"] = row["name"]
                 actor["picurl"] = row["picurl"]
                 listOfActors.append(actor)
+        return listOfActors
 
-    return listOfActors
 
 # def testQueries():
 #     S = requests.Session()
@@ -126,4 +126,3 @@ def retrieveListOfAAN():
 #     soup = BeautifulSoup(DATA["parse"]["text"]["*"], "html.parser")
 #     print(soup.find("td", class_="infobox-image").next_element['href'])
     
-storeListOfAAN()
