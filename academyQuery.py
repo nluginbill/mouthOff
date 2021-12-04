@@ -29,7 +29,6 @@ def getListOfAcademyAwardNominees():
         R = S.get(url=URL, params=PARAMS)
         DATA = R.json()
         links = None
-        # print(json.dumps(DATA, sort_keys=True, indent=4))
         if "query" in DATA:    
             links = DATA["query"]["pages"][0]["linkshere"]
         if links:         
@@ -107,22 +106,3 @@ def retrieveListOfAAN():
                 actor["picurl"] = row["picurl"]
                 listOfActors.append(actor)
         return listOfActors
-
-
-# def testQueries():
-#    S = requests.Session()
-#    URL = "https://en.wikipedia.org/w/api.php"    
-
-#    PARAMS = {
-#       "action": "parse",
-#       "format": "json",
-#       "pageid": 2397,
-#       "prop": "categories|images|text",
-#       "maxlag": "1"
-#    }
-
-#    R = S.get(url=URL, params=PARAMS)
-#    DATA = R.json()
-#    soup = BeautifulSoup(DATA["parse"]["text"]["*"], "html.parser")
-#    print(soup.find("td", class_="infobox-image").next_element['href'])
-    

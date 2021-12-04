@@ -1,7 +1,3 @@
-# first download the picture
-# then find the mouth (tip of nose? chin?)
-# then delete the picture
-
 import requests
 import re
 import face_recognition

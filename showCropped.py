@@ -10,7 +10,9 @@ import ast
 from findMouth import retrieveListOfActorFaces
 
 def showCropped(celebFaces):
-	celebFace = random.choice(celebFaces)
+	# celebFace = random.choice(celebFaces)
+	# celebFace = next(x for x in celebFaces if x["name"] == "Gary Oldman")
+	celebFace = next(x for x in celebFaces if x["name"] == "Kim Basinger")
 
 	first_name = celebFace["name"].split()[0]
 	last_name = celebFace["name"].split()[1]
@@ -23,17 +25,29 @@ def showCropped(celebFaces):
 		imgReq = S.get(imgurl, stream=True)
 		if imgReq.status_code == 200:
 			imgReq.raw.decode_content = True
-			print(celebFace)
 			face = ast.literal_eval(celebFace["facelandmarks"][1:-1])
 			filename = url.split("/")[-1][5::]
 			path = f"{Path(__file__).parent}/temp/"
 			img = path + filename
-			
-
+			print(celebFace["name"])
 			img = Image.open(BytesIO(imgReq.content))
-			box = (int(face["chin"][2][0]), int(face["chin"][2][1]), int(face["chin"][14][0]), int(face["chin"][8][1]))
+			box = tuple()
+			# if there are two faces in a picture, face will actually be a tuple of faces. If there is one face, it will be dict.
+			if type(face) == 'dict':			
+				box = (int(face["chin"][2][0]), int(face["chin"][2][1]), int(face["chin"][14][0]), int(face["chin"][8][1]))
+			else:
+				# this else block is for the tuples, for multiple faces. it finds the biggest/closest face and assigns the crop box based
+				# on the closest face
+				closestFace = None
+				biggestFace = 0
+				for i, f in enumerate(face):
+					if f["chin"][16][0] - f["chin"][0][0] > biggestFace:
+						biggestFace = f["chin"][16][0] - f["chin"][0][0]
+						closestFace = i
+				box = (int(face[closestFace]["chin"][2][0]), int(face[closestFace]["chin"][2][1]), int(face[closestFace]["chin"][14][0]), int(face[closestFace]["chin"][8][1]))
 			croppedImg = img.crop(box)
 			croppedImg.show()
+			return celebFace
 
 def showLandmarkNumbers(celebFaces):
 	celebFace = random.choice(celebFaces)
@@ -68,10 +82,3 @@ def showLandmarkNumbers(celebFaces):
 				out = Image.alpha_composite(base, txt)
 				out.show()
 
-			# img = Image.open(BytesIO(imgReq.content))
-			# box = (face[""])
-			# croppedImg = img.crop()
-			# img.show()
-
-
-showCropped(retrieveListOfActorFaces())
