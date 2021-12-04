@@ -13,7 +13,7 @@ def getListOfAcademyAwardNominees():
     academyActors = []
     while True:
         # get all of the links on the Academy Award Nominations list of actors
-        URL = "https://en.wikipedia.org/w/api.php"    
+        URL = "https://en.wikipedia.org/w/api.php"  
 
         PARAMS = {
             "action": "query",
@@ -30,9 +30,9 @@ def getListOfAcademyAwardNominees():
         DATA = R.json()
         links = None
         # print(json.dumps(DATA, sort_keys=True, indent=4))
-        if "query" in DATA:       
+        if "query" in DATA:    
             links = DATA["query"]["pages"][0]["linkshere"]
-        if links:            
+        if links:         
             for i, link in enumerate(links):
                 # if i > 0:
                 actor = dict()
@@ -53,7 +53,7 @@ def getEachActorInfo(listOfActors):
     S = requests.Session()
     academyActors = []
     for actor in listOfActors:
-        URL = "https://en.wikipedia.org/w/api.php"    
+        URL = "https://en.wikipedia.org/w/api.php"  
 
         PARAMS = {
             "action": "parse",
@@ -98,7 +98,7 @@ def storeListOfAAN():
 def retrieveListOfAAN():
     listOfActors = list()
     with open("actors.csv") as file:
-        csv_reader = DictReader(file)        
+        csv_reader = DictReader(file)      
         for i, row in enumerate(csv_reader):
             actor = dict()
             if i > 0:
@@ -110,19 +110,19 @@ def retrieveListOfAAN():
 
 
 # def testQueries():
-#     S = requests.Session()
-#     URL = "https://en.wikipedia.org/w/api.php"    
+#    S = requests.Session()
+#    URL = "https://en.wikipedia.org/w/api.php"    
 
-#     PARAMS = {
-#         "action": "parse",
-#         "format": "json",
-#         "pageid": 2397,
-#         "prop": "categories|images|text",
-#         "maxlag": "1"
-#     }
+#    PARAMS = {
+#       "action": "parse",
+#       "format": "json",
+#       "pageid": 2397,
+#       "prop": "categories|images|text",
+#       "maxlag": "1"
+#    }
 
-#     R = S.get(url=URL, params=PARAMS)
-#     DATA = R.json()
-#     soup = BeautifulSoup(DATA["parse"]["text"]["*"], "html.parser")
-#     print(soup.find("td", class_="infobox-image").next_element['href'])
+#    R = S.get(url=URL, params=PARAMS)
+#    DATA = R.json()
+#    soup = BeautifulSoup(DATA["parse"]["text"]["*"], "html.parser")
+#    print(soup.find("td", class_="infobox-image").next_element['href'])
     
