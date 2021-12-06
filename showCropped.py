@@ -11,19 +11,19 @@ from findMouth import retrieveListOfActorFaces
 
 def showCropped(celebFaces):
 	# celebFace = random.choice(celebFaces)
-	celebFace = next(x for x in celebFaces if x["name"] == "Walter Brennan")
-	# celebFace = next(x for x in celebFaces if x["name"] == "Kim Basinger")
+	# celebFace = next(x for x in celebFaces if x["name"] == "Walter Brennan")
+	celebFace = next(x for x in celebFaces if x["name"] == "Roland Young")
 
 	first_name = celebFace["name"].split()[0]
 	last_name = celebFace["name"].split()[1]
 	url = f"https://en.wikipedia.org/wiki/{first_name}_{last_name}#/media/File:{celebFace['picurl']}"
 	S = requests.Session()
-	headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0"}
-	R = S.get(url, headers=headers)	
+	headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:94.0) Gecko/20100101 Firefox/94.0"}
+	R = S.get(url, headers=headers)
 	soup = BeautifulSoup(R.content, "html.parser")
 	if soup.find("meta", {"property": "og:image"}):
 		imgurl = soup.find("meta", {"property": "og:image"})["content"]
-		imgReq = S.get(imgurl, stream=True)
+		imgReq = S.get(imgurl, headers=headers, stream=True)
 		if imgReq.status_code == 200:
 			imgReq.raw.decode_content = True
 			face = ast.literal_eval(celebFace["facelandmarks"][1:-1])
