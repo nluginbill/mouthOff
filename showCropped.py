@@ -11,14 +11,15 @@ from findMouth import retrieveListOfActorFaces
 
 def showCropped(celebFaces):
 	# celebFace = random.choice(celebFaces)
-	# celebFace = next(x for x in celebFaces if x["name"] == "Gary Oldman")
-	celebFace = next(x for x in celebFaces if x["name"] == "Kim Basinger")
+	celebFace = next(x for x in celebFaces if x["name"] == "Walter Brennan")
+	# celebFace = next(x for x in celebFaces if x["name"] == "Kim Basinger")
 
 	first_name = celebFace["name"].split()[0]
 	last_name = celebFace["name"].split()[1]
 	url = f"https://en.wikipedia.org/wiki/{first_name}_{last_name}#/media/File:{celebFace['picurl']}"
 	S = requests.Session()
-	R = S.get(url)
+	headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0"}
+	R = S.get(url, headers=headers)	
 	soup = BeautifulSoup(R.content, "html.parser")
 	if soup.find("meta", {"property": "og:image"}):
 		imgurl = soup.find("meta", {"property": "og:image"})["content"]
@@ -33,7 +34,7 @@ def showCropped(celebFaces):
 			img = Image.open(BytesIO(imgReq.content))
 			box = tuple()
 			# if there are two faces in a picture, face will actually be a tuple of faces. If there is one face, it will be dict.
-			if type(face) == 'dict':			
+			if type(face) is dict:			
 				box = (int(face["chin"][2][0]), int(face["chin"][2][1]), int(face["chin"][14][0]), int(face["chin"][8][1]))
 			else:
 				# this else block is for the tuples, for multiple faces. it finds the biggest/closest face and assigns the crop box based
@@ -48,6 +49,13 @@ def showCropped(celebFaces):
 			croppedImg = img.crop(box)
 			croppedImg.show()
 			return celebFace
+		else:
+			print(celebFace["name"])
+			print(imgReq.status_code)
+			print("html error")
+	else:
+		print("Image didn't work out")
+			
 
 def showLandmarkNumbers(celebFaces):
 	celebFace = random.choice(celebFaces)
