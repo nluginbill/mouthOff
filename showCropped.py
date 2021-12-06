@@ -11,8 +11,8 @@ from findMouth import retrieveListOfActorFaces
 
 def showCropped(celebFaces):
 	# celebFace = random.choice(celebFaces)
-	# celebFace = next(x for x in celebFaces if x["name"] == "Walter Brennan")
-	celebFace = next(x for x in celebFaces if x["name"] == "Roland Young")
+	celebFace = next(x for x in celebFaces if x["name"] == "Catalina Sandino Moreno")
+	# celebFace = next(x for x in celebFaces if x["name"] == "Roland Young")
 
 	first_name = celebFace["name"].split()[0]
 	last_name = celebFace["name"].split()[1]
@@ -26,6 +26,7 @@ def showCropped(celebFaces):
 		imgReq = S.get(imgurl, headers=headers, stream=True)
 		if imgReq.status_code == 200:
 			imgReq.raw.decode_content = True
+			print(celebFace["facelandmarks"])
 			face = ast.literal_eval(celebFace["facelandmarks"][1:-1])
 			filename = url.split("/")[-1][5::]
 			path = f"{Path(__file__).parent}/temp/"
@@ -47,7 +48,18 @@ def showCropped(celebFaces):
 						closestFace = i
 				box = (int(face[closestFace]["chin"][2][0]), int(face[closestFace]["chin"][2][1]), int(face[closestFace]["chin"][14][0]), int(face[closestFace]["chin"][8][1]))
 			croppedImg = img.crop(box)
-			croppedImg.show()
+			resizedImg = None
+			if croppedImg.size[0] < 200:
+				width, height = croppedImg.size
+				print(width)
+				ratio = width / height
+				resizedImg = croppedImg.resize((200, int(200 / ratio)))
+			if resizedImg:
+				resizedImg.show()
+			else:
+				croppedImg.show()
+
+			
 			return celebFace
 		else:
 			print(celebFace["name"])
