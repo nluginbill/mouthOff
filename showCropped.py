@@ -10,8 +10,8 @@ import ast
 from findMouth import retrieveListOfActorFaces
 
 def showCropped(celebFaces):
-	# celebFace = random.choice(celebFaces)
-	celebFace = next(x for x in celebFaces if x["name"] == "Catalina Sandino Moreno")
+	celebFace = random.choice(celebFaces)
+	# celebFace = next(x for x in celebFaces if x["name"] == "Catalina Sandino Moreno")
 	# celebFace = next(x for x in celebFaces if x["name"] == "Roland Young")
 
 	first_name = celebFace["name"].split()[0]
@@ -26,12 +26,11 @@ def showCropped(celebFaces):
 		imgReq = S.get(imgurl, headers=headers, stream=True)
 		if imgReq.status_code == 200:
 			imgReq.raw.decode_content = True
-			print(celebFace["facelandmarks"])
 			face = ast.literal_eval(celebFace["facelandmarks"][1:-1])
 			filename = url.split("/")[-1][5::]
 			path = f"{Path(__file__).parent}/temp/"
 			img = path + filename
-			print(celebFace["name"])
+			# print(celebFace["name"])
 			img = Image.open(BytesIO(imgReq.content))
 			box = tuple()
 			# if there are two faces in a picture, face will actually be a tuple of faces. If there is one face, it will be dict.
