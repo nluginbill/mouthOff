@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Play Mouth Off{% endblock %}</h1>
+  {% if g.user %}
+    <p>Hello, {{g.user.username}}</p>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <img id='mouth' src="{{url_for('static', filename=celeb['imgpath_mouth'])}}" />
+{% endblock %} 
