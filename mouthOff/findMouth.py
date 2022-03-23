@@ -14,7 +14,8 @@ from io import BytesIO
 from academyQuery import retrieveListOfAAN
 
 
-def storeListOfActorFaces(celebs):
+def storeListOfActorFaces():
+	celebs = retrieveListOfAAN()
 	with open("actorFaces.csv", "w", newline="") as file:
 		headers = ["pageid", "name", "picurl", "facelandmarks"]
 		csv_writer = DictWriter(file, fieldnames=headers)
