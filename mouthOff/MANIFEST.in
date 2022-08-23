@@ -1,0 +1,4 @@
+include mouthOff/schema.sql
+graft mouthOff/static
+graft mouthOff/templates
+global-exclude *.pyc

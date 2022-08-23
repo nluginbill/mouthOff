@@ -1,0 +1,12 @@
+8/23/2022:
+    ! make a list of celebs that we have mouth images for (cropped), for play.py/index route to pick celebrities from
+    - In play.py, the index route, I am simply grabbing the list of academy award nominees, picking one at random,
+        and checking if I have an image of their mouth. If not, pick another at random, and find the image of their
+        mouth.
+
+    ! img with src pathnames that have % are broken
+
+issues for later:
+
+explore why some oscar nominees get filtered out (e.g., Catherine Zeta-Jones (first on list that is lost))
+

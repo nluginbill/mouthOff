@@ -3,20 +3,39 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from csv import DictReader
+from os import getcwd
+from os.path import exists
 
 from mouthOff.auth import login_required
 from mouthOff.db import get_db
+from mouthOff.findMouth import retrieveMouthImg, getMouthCoords
 
 bp = Blueprint('play', __name__)
 
 @bp.route('/')
 def index():
     import random
-    celeb = random.choice(retrieveListOfActorFaces())
-    celeb['imgpath'] = f'img/{celeb["picurl"]}'
-    celeb['imgpath_mouth'] = f'img/mouth_{celeb["picurl"]}'
-    
-    return render_template('play/index.html', celeb=celeb)
+
+    while True:
+        celeb = random.choice(retrieveListOfActorFaces())
+        celeb['imgpath'] = f'img/{celeb["picurl"]}'
+        celeb['imgpath_mouth'] = f'img/cropped{celeb["picurl"]}'
+        # print(url_for('static', filename=celeb['imgpath_mouth']))
+        # print(getcwd())
+        # print(getcwd() + "/mouthOff/" + celeb['imgpath_mouth'])
+        # print(exists((getcwd() + "/mouthOff/" + celeb['imgpath_mouth']).strip()))
+        # print(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth']))
+        # print(exists(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth'])))
+
+        print(celeb['imgpath_mouth'])
+
+
+        if exists(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth'])):
+            return render_template('play/index.html', celeb=celeb)
+
+
+
+
 
 def retrieveListOfActorFaces():
     listOfActors = list()

@@ -48,7 +48,7 @@ def getListOfAcademyAwardNominees():
             time.sleep(.5)
     return academyActors
 
-# print(len(getListOfAcademyAwardNominees()))
+
 
 def getEachActorInfo(listOfActors):
     S = requests.Session()
@@ -66,15 +66,19 @@ def getEachActorInfo(listOfActors):
 
         R = S.get(url=URL, params=PARAMS)
         DATA = R.json()
+
+        print(actor)
+
         if "parse" in DATA:
             actualActor = False
             soup = BeautifulSoup(DATA["parse"]["text"]["*"], "html.parser")
             if soup.find('th', text="Occupation"):
                 if "Actor" or "Actress" in soup.find('th', text="Occupation").parent:
                     actualActor = True
-                if soup.find("td", class_="infobox-image").next_element['href']:                
-                    actor['picurl'] = soup.find("td", class_="infobox-image").next_element['href']
-                    actor['picurl'] = actor['picurl'][11:]
+                main_pic = soup.find("td", class_="infobox-image").next_element
+                if main_pic.name == 'a' and main_pic['href']:
+                    actor['href'] = soup.find("td", class_="infobox-image").next_element['href']
+                    actor['picurl'] = actor['href'][11:]
                 else:
                     actualActor = False
             if actualActor:
@@ -85,7 +89,7 @@ def getEachActorInfo(listOfActors):
 
 def storeListOfAAN():
     with open("actors.csv", "w", newline="") as file:
-        headers = ["pageid", "name", "picurl"]
+        headers = ["pageid", "name", "href", "picurl"]
         csv_writer = DictWriter(file, fieldnames=headers)
         csv_writer.writeheader()
         listOfActors = getEachActorInfo(getListOfAcademyAwardNominees())
@@ -93,6 +97,7 @@ def storeListOfAAN():
             csv_writer.writerow({
                 "pageid": actor["pageid"],
                 "name": actor["name"],
+                "href": actor["href"],
                 "picurl": actor["picurl"]
                 })
 
@@ -105,7 +110,11 @@ def retrieveListOfAAN():
             if i > 0:
                 actor["pageid"] = row["pageid"]
                 actor["name"] = row["name"]
+                actor["href"] = row["href"]
                 actor["picurl"] = row["picurl"]
                 listOfActors.append(actor)
         return listOfActors
 
+
+if __name__ == "__main__":
+    getListOfAcademyAwardNominees()
