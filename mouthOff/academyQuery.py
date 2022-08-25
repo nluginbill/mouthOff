@@ -5,6 +5,48 @@ from csv import DictReader, DictWriter
 from bs4 import BeautifulSoup
 
 
+def getListOfSAGAwardedActors():
+    S = requests.Session()
+    count = 0
+    lhcontinue = ""
+    actors = []
+    while True:
+        # get all of the links on the Academy Award Nominations list of actors
+        URL = "https://en.wikipedia.org/w/api.php"
+
+        PARAMS = {
+            "action": "query",
+            "format": "json",
+            "prop": "linkshere",
+            "continue": "||",
+            "titles": "Screen Actors Guild Awards",
+            "formatversion": "2",
+            "maxlag": "1",
+            "lhcontinue": lhcontinue,
+        }
+
+        R = S.get(url=URL, params=PARAMS)
+        DATA = R.json()
+        links = None
+        if "query" in DATA:
+            links = DATA["query"]["pages"][0]["linkshere"]
+        if links:
+            for i, link in enumerate(links):
+                # if i > 0:
+                actor = dict()
+                actor["pageid"] = link["pageid"]
+                actor["name"] = link["title"]
+                actors.append(actor)
+
+            # check if there are any more results, if there are, enter continue code for next page results
+            if "batchcomplete" in DATA:
+                break
+            else:
+                lhcontinue = DATA["continue"]["lhcontinue"]
+            # keep mediawiki happy
+            time.sleep(.5)
+    return actors
+
 # returns a list of all Academy Award Nominees
 def getListOfAcademyAwardNominees():
     S = requests.Session()

@@ -1,3 +1,5 @@
+import urllib.parse
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, current_app
 )
@@ -8,7 +10,6 @@ from os.path import exists
 
 from mouthOff.auth import login_required
 from mouthOff.db import get_db
-from mouthOff.findMouth import retrieveMouthImg, getMouthCoords
 
 bp = Blueprint('play', __name__)
 
@@ -17,36 +18,29 @@ def index():
     import random
 
     while True:
-        celeb = random.choice(retrieveListOfActorFaces())
-        celeb['imgpath'] = f'img/{celeb["picurl"]}'
-        celeb['imgpath_mouth'] = f'img/cropped{celeb["picurl"]}'
-        # print(url_for('static', filename=celeb['imgpath_mouth']))
-        # print(getcwd())
-        # print(getcwd() + "/mouthOff/" + celeb['imgpath_mouth'])
-        # print(exists((getcwd() + "/mouthOff/" + celeb['imgpath_mouth']).strip()))
-        # print(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth']))
-        # print(exists(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth'])))
-
+        celeb = random.choice(retrieveListOfActors())
+        celeb['imgpath'] = f'img/{celeb["filename"]}'
+        celeb['imgpath_mouth'] = f'img/cropped{celeb["filename"]}'
         print(celeb['imgpath_mouth'])
-
+        # img_src = urllib.parse.unquote(celeb['imgpath_mouth'])
+        # celeb['imgpath_mouth'] = img_src
+        print(exists(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth'])))
 
         if exists(getcwd() + "/mouthOff" + url_for('static', filename=celeb['imgpath_mouth'])):
             return render_template('play/index.html', celeb=celeb)
 
 
-
-
-
-def retrieveListOfActorFaces():
+def retrieveListOfActors():
     listOfActors = list()
-    with current_app.open_resource('../instance/actorFaces.csv', 'rt') as file:
+    with current_app.open_resource('../instance/actors.csv', 'rt') as file:
         csv_reader = DictReader(file)
         for i, row in enumerate(csv_reader):
             actor = dict()
             if i > 0:
-                actor["pageid"] = row["pageid"]
                 actor["name"] = row["name"]
-                actor["picurl"] = row["picurl"]
-                actor["facelandmarks"] = row["facelandmarks"]
-                listOfActors.append(actor)
+                actor["filename"] = row["filename"]
+                # weed out the lists that got added to the csv
+                filter_list = ["list of", "academy", "screen "]
+                if actor["filename"][:8].lower() not in filter_list:
+                    listOfActors.append(actor)
     return listOfActors
